@@ -119,6 +119,8 @@ extern uint32_t __end_data;
 extern uint32_t __start_bss;
 extern uint32_t __end_bss;
 
+extern void __libc_init_array(void);
+
 void Reset_Handler(void)
 {
 	uint32_t *s = &__la_data;

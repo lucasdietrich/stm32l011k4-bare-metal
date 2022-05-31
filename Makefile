@@ -48,7 +48,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 all: build/firmware.elf
 
-build/%.o: %.c
+build/%.o: src/%.c
 	mkdir -p build
 	$(CC) -c $(CFLAGS) $^ -o $@
 
@@ -71,4 +71,4 @@ clean:
 	# rm -rf *.o *.elf *.d
 	rm -rf build
 
--include $(wildcard $(BUILD_DIR)/*.d)
+-include $(wildcard build/*.d)
