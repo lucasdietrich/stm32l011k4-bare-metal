@@ -1,0 +1,44 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "STM32CubeL0/Drivers/CMSIS/Include",
+                "STM32CubeL0/Drivers/CMSIS/Device/ST/STM32L0xx/Include",
+                "STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc",
+                "STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc/Legacy",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "STM32CubeL0/Drivers/CMSIS/Include",
+                    "STM32CubeL0/Drivers/CMSIS/Device/ST/STM32L0xx/Include",
+                    "STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc",
+                    "STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc/Legacy",
+                    ""
+                ]
+            },
+            "defines": [
+                "STM32L011xx",
+                "USE_HAL_DRIVER",
+                "F_CPU=32000000L",
+                ""
+            ],
+            "compilerPath": "/usr/bin/arm-none-eabi-gcc",
+            "compilerArgs": [
+                "-mthumb",
+                "-mcpu=cortex-m0plus",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,66 @@
+{
+    "version": "2.0.0",
+    "options": {
+        "env": {
+        }
+    },
+    "tasks": [
+        {
+            "label": "Build",
+            "detail": "Build",
+            "type": "shell",
+            "command": "make",
+            "args": [
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "options": {
+                "statusbar": {
+                    "hide": false
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Flash",
+            "detail": "Flash",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "flash"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "options": {
+                "statusbar": {
+                    "hide": false
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "make",
+            "group": "build",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": false
+                }
+            },
+            "presentation": {
+                "echo": false,
+            },
+            "problemMatcher": []
+        },
+    ]
+}
