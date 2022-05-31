@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+#include <stm32l010x4.h>
+
 /* https://github.com/STMicroelectronics/cmsis_device_l0/blob/master/Source/Templates/gcc/startup_stm32l011xx.s */
 
 #define SRAM_START 0X20000000U
@@ -121,8 +123,15 @@ extern uint32_t __end_bss;
 
 extern void __libc_init_array(void);
 
+#define VECT_TAB_BASE_ADDRESS FLASH_BASE
+#define VECT_TAB_OFFSET (0x00000000UL)
+
 void Reset_Handler(void)
 {
+	/* set vector table location */
+	SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET;
+
+	/* copy data to RAM */
 	uint32_t *s = &__la_data;
 	uint32_t *p = &__start_data;
 
@@ -130,14 +139,20 @@ void Reset_Handler(void)
 		*p++ = *s++;
 	}
 
+	/* initialize bss to 0 */
 	p = &__start_bss;
 	while (p < &__end_bss) {
 		*p++ = 0U;
 	}
 
-	// __libc_init_array();
+	/* initialize libc library */
+	__libc_init_array();
 
+	/* call application entry function */
 	main();
+
+	/* trap main return */
+	while (1);
 }
 
 void Default_Handler(void)

@@ -33,9 +33,11 @@ SECTIONS
     .bss :
     {
         __start_bss = .;
+	__bss_start__ = __start_bss;
         *(.bss)
         *(.noinit)
         . = ALIGN(4);
         __end_bss = .;
+	__bss_end__ = __end_bss;
     } > SRAM
 }

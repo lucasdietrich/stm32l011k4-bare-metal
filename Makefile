@@ -24,10 +24,10 @@ AS_INCLUDES =
 # C includes
 C_INCLUDES =  \
 -Iinclude \
--ISMT32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc \
--ISMT32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc/Legacy \
--ISMT32CubeL0/Drivers/CMSIS/Device/ST/STM32L0xx/Include \
--ISMT32CubeL0/Drivers/CMSIS/Include
+-ISTM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc \
+-ISTM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc/Legacy \
+-ISTM32CubeL0/Drivers/CMSIS/Device/ST/STM32L0xx/Include \
+-ISTM32CubeL0/Drivers/CMSIS/Include
 
 CC=arm-none-eabi-gcc
 AS=arm-none-eabi-gcc -x assembler-with-cpp
@@ -36,12 +36,12 @@ SZ=arm-none-eabi-size
 HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
 
-MACH=cortex-m0plus
-ASFLAGS = -mcpu=$(MACH) $(AS_DEFS) $(AS_INCLUDES) -Wall -mthumb -g -gdwarf-2
-CFLAGS= -mcpu=$(MACH) $(C_DEFS) $(C_INCLUDES) -Wall -mthumb -std=gnu11 -O0 -g -gdwarf-2
+CPU = -mcpu=cortex-m0plus -mthumb
+CFLAGS= $(CPU) $(C_DEFS) $(C_INCLUDES) -Wall -fdata-sections -ffunction-sections -std=gnu11 -O0 -g -gdwarf-2
 LDSCRIPT=ls.ld
-LDFLAGS= -T $(LDSCRIPT) -nostdlib -Wl,-Map=build/firmware.map
+LDFLAGS= $(CPU) -v -T $(LDSCRIPT) -lc -lm -lnosys -specs=nano.specs -Wl,-Map=build/firmware.map
 # -Wl,--gc-sections
+# -lnosys 
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
@@ -58,7 +58,7 @@ build/firmware.elf: build/main.o build/stm32l011k4_startup.o
 flash: build/firmware.elf
 	openocd -f interface/stlink.cfg -f target/stm32l0.cfg -c "program build/firmware.elf verify reset exit"
 
-dis: firmware.elf
+dis: build/firmware.elf
 	arm-none-eabi-objdump -S build/firmware.elf > build/objdump_src.S
 	arm-none-eabi-objdump -D build/firmware.elf > build/objdump_all.S
 	arm-none-eabi-objdump -d build/firmware.elf > build/objdump.S
