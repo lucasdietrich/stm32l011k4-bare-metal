@@ -37,11 +37,13 @@ HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
 
 CPU = -mcpu=cortex-m0plus -mthumb
-CFLAGS= $(CPU) $(C_DEFS) $(C_INCLUDES) -Wall -fdata-sections -ffunction-sections -std=gnu11 -O0 -g -gdwarf-2
+CFLAGS= $(CPU) $(C_DEFS) $(C_INCLUDES) -Wall -fdata-sections -ffunction-sections -O0 -g -gdwarf-2
 LDSCRIPT=ls.ld
-LDFLAGS= $(CPU) -v -T $(LDSCRIPT) -lc -lm -lnosys -specs=nano.specs -Wl,-Map=build/firmware.map
+LDFLAGS= $(CPU) -T$(LDSCRIPT) -lc -lm -lnosys -specs=nano.specs -Wl,-Map=build/firmware.map -Wl,--gc-sections
 # -Wl,--gc-sections
-# -lnosys 
+# -nostdlib
+# -Og : optimization option specially choosen for debug
+# -O0 : no debug
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
