@@ -2,7 +2,8 @@
     "makefile.extensionOutputFolder": "./.vscode",
     "files.associations": {
         "*.asm": "avr",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "sfunc.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": false
 }

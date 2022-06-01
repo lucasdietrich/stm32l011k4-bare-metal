@@ -15,8 +15,8 @@ AS_DEFS =
 
 # C defines
 C_DEFS =  \
--DSTM32L011xx
-# -DUSE_HAL_DRIVER \
+-DSTM32L011xx \
+-DUSE_HAL_DRIVER
 
 # AS includes
 AS_INCLUDES = 
@@ -37,7 +37,10 @@ HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
 
 CPU = -mcpu=cortex-m0plus -mthumb
+
 CFLAGS= $(CPU) $(C_DEFS) $(C_INCLUDES) -Wall -fdata-sections -ffunction-sections -O0 -g -gdwarf-2
+ASFLAGS = $(CPU) $(AS_DEFS) $(AS_INCLUDES) -Wall -fdata-sections -ffunction-sections -g -gdwarf-2
+
 LDSCRIPT=ls.ld
 LDFLAGS= $(CPU) -T$(LDSCRIPT) -lc -lm -lnosys -specs=nano.specs -Wl,-Map=build/firmware.map -Wl,--gc-sections
 # -Wl,--gc-sections
@@ -54,7 +57,11 @@ build/%.o: src/%.c
 	mkdir -p build
 	$(CC) -c $(CFLAGS) $^ -o $@
 
-build/firmware.elf: build/main.o build/stm32l011k4_startup.o
+build/%.s.o: src/%.s
+	mkdir -p build
+	$(AS) -c $(CFLAGS) $^ -o $@
+
+build/firmware.elf: build/main.o build/stm32l011k4_startup.o build/sfunc.s.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
 flash: build/firmware.elf
@@ -68,6 +75,9 @@ dis: build/firmware.elf
 	nm --print-size --size-sort --radix=x build/firmware.elf > build/nm.txt
 	arm-none-eabi-readelf -a build/firmware.elf > build/readelf_all.txt
 	arm-none-eabi-size -G -d build/firmware.elf > build/size.txt
+
+qemu: build/firmware.elf
+	qemu-arm -cpu cortex-m0 -singlestep -g 1234 build/firmware.elf
 
 clean:
 	# rm -rf *.o *.elf *.d

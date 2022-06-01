@@ -45,7 +45,7 @@
 `arm-none-eabi-gcc -Wl,--help | grep gc-sections`
 arm-none-eabi-gcc --help
 
-## Debug with OpenOCD and GDB
+## Debug target with OpenOCD and GDB
 
 OpenOCD terminal : 
 ```
@@ -66,3 +66,8 @@ monitor reset halt
 monitor resume
 monitor reset
 ```
+
+## Debug in QEMU using GDB
+
+Run `make qemu`
+And press `Ctrl + F5`

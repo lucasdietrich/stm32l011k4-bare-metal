@@ -129,7 +129,7 @@ extern void __libc_init_array(void);
 void Reset_Handler(void)
 {
 	/* set vector table location */
-	SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET;
+	// SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET;
 
 	/* copy data to RAM */
 	uint32_t *s = &__la_data;

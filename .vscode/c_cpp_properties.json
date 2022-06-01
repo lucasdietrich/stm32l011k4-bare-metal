@@ -8,6 +8,7 @@
         {
             "name": "PlatformIO",
             "includePath": [
+		"${workspaceFolder}/include",
                 "STM32CubeL0/Drivers/CMSIS/Include",
                 "STM32CubeL0/Drivers/CMSIS/Device/ST/STM32L0xx/Include",
                 "STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc",

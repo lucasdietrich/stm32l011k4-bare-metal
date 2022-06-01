@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Cortex Debug",
+            "name": "Target Debug",
             "cwd": "${workspaceFolder}",
             "executable": "build/firmware.elf",
             "request": "launch",
@@ -15,6 +15,23 @@
                 "target/stm32l0.cfg"
             ],
             "svdFile": "${workspaceFolder}/STM32L0x1.svd"
-        }
+        },
+	{
+		"name": "Qemu Debug",
+		"type": "cppdbg",
+		"request": "launch",
+		"miDebuggerServerAddress": "127.0.0.1:1234",
+		"program": "build/firmware.elf",
+		"args": [],
+		"stopAtEntry": true,
+		"cwd": "${workspaceFolder}",
+		"environment": [],
+		"externalConsole": false,
+		"miDebuggerPath": "/usr/bin/arm-none-eabi-gdb",
+		"logging": {
+			"engineLogging": false
+		},
+		"MIMode": "gdb",
+	}
     ]
 }
