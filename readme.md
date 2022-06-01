@@ -71,3 +71,5 @@ monitor reset
 
 Run `make qemu`
 And press `Ctrl + F5`
+
+![](./pics/linux-arm-debug.png)
