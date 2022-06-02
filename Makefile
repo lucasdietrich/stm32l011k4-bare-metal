@@ -4,7 +4,8 @@ BUILD_DIR = .
 C_SOURCES =  \
 src/main.c \
 src/stm32l011k4_startup.c \
-STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c
+STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c \
+STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -54,31 +55,25 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 all: build/firmware.elf
 
-build/%.o: src/%.c
+OBJECTS = $(addprefix build/,$(notdir $(C_SOURCES:.c=.o)))
+vpath %.c $(sort $(dir $(C_SOURCES)))
+# list of ASM program objects
+OBJECTS += $(addprefix build/,$(notdir $(ASM_SOURCES:.s=.o)))
+vpath %.s $(sort $(dir $(ASM_SOURCES)))
+
+build:
 	mkdir -p build
-	$(CC) -c $(CFLAGS) $^ -o $@
 
-build/stm32l0xx_hal.o: STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c
-	$(CC) -c $(CFLAGS) $^ -o $@
+# pipe
+build/%.o: %.c | build
+	$(CC) -c $(CFLAGS) $< -o $@
 
-build/stm32l0xx_hal_cortex.o: STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c
-	$(CC) -c $(CFLAGS) $^ -o $@
+build/%.o: %.s
+	$(AS) -c $(CFLAGS) $< -o $@
 
-build/stm32l0xx_hal_rcc.o: STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc.c
-	$(CC) -c $(CFLAGS) $^ -o $@
-
-build/stm32l0xx_hal_rcc_ex.o: STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc_ex.c
-	$(CC) -c $(CFLAGS) $^ -o $@
-
-build/%.s.o: src/%.s
-	$(AS) -c $(CFLAGS) $^ -o $@
-
-build/firmware.elf: build/main.o build/stm32l011k4_startup.o build/sfunc.s.o build/stm32l0xx_hal.o build/stm32l0xx_hal_rcc.o build/stm32l0xx_hal_cortex.o build/stm32l0xx_hal_rcc_ex.o
-	$(CC) $(LDFLAGS) $^ -o $@
+build/firmware.elf: $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 	$(SZ) $@
-
-flash: build/firmware.elf
-	openocd -f interface/stlink.cfg -f target/stm32l0.cfg -c "program build/firmware.elf verify reset exit"
 
 dis: build/firmware.elf
 	arm-none-eabi-objdump -S build/firmware.elf > build/objdump_src.S
@@ -89,11 +84,13 @@ dis: build/firmware.elf
 	arm-none-eabi-readelf -a build/firmware.elf > build/readelf_all.txt
 	arm-none-eabi-size -G -d build/firmware.elf > build/size.txt
 
+flash: build/firmware.elf
+	openocd -f interface/stlink.cfg -f target/stm32l0.cfg -c "program build/firmware.elf verify reset exit"
+
 qemu: build/firmware.elf
 	qemu-arm -cpu cortex-m0 -singlestep -g 1234 build/firmware.elf
 
 clean:
-	# rm -rf *.o *.elf *.d
 	rm -rf build
 
 -include $(wildcard build/*.d)
