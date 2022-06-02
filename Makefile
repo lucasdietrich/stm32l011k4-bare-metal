@@ -1,13 +1,14 @@
 BUILD_DIR = .
 
 # C sources
-C_SOURCES = \
-	src/main.c
+C_SOURCES =  \
+src/main.c \
+src/stm32l011k4_startup.c \
+STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c
 
 # ASM sources
-# ASM_SOURCES = \
-# 	src/startup.s
-ASM_SOURCES = 
+ASM_SOURCES =  \
+src/sfunc.s
 
 # macros for gcc
 # AS defines
@@ -32,14 +33,14 @@ C_INCLUDES =  \
 CC=arm-none-eabi-gcc
 AS=arm-none-eabi-gcc -x assembler-with-cpp
 CP=arm-none-eabi-objcopy
-SZ=arm-none-eabi-size
+SZ=arm-none-eabi-size -d -G
 HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
 
 CPU = -mcpu=cortex-m0plus -mthumb
 
-CFLAGS= $(CPU) $(C_DEFS) $(C_INCLUDES) -Wall -fdata-sections -ffunction-sections -O0 -g -gdwarf-2
-ASFLAGS = $(CPU) $(AS_DEFS) $(AS_INCLUDES) -Wall -fdata-sections -ffunction-sections -g -gdwarf-2
+CFLAGS= $(CPU) $(C_DEFS) $(C_INCLUDES) -Wall -fdata-sections -ffunction-sections -Og -g -gdwarf-2
+ASFLAGS = $(CPU) $(AS_DEFS) $(AS_INCLUDES) -Wall -fdata-sections -ffunction-sections -Og -g -gdwarf-2
 
 LDSCRIPT=ls.ld
 LDFLAGS= $(CPU) -T$(LDSCRIPT) -lc -lm -lnosys -specs=nano.specs -Wl,-Map=build/firmware.map -Wl,--gc-sections
@@ -57,12 +58,24 @@ build/%.o: src/%.c
 	mkdir -p build
 	$(CC) -c $(CFLAGS) $^ -o $@
 
+build/stm32l0xx_hal.o: STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c
+	$(CC) -c $(CFLAGS) $^ -o $@
+
+build/stm32l0xx_hal_cortex.o: STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c
+	$(CC) -c $(CFLAGS) $^ -o $@
+
+build/stm32l0xx_hal_rcc.o: STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc.c
+	$(CC) -c $(CFLAGS) $^ -o $@
+
+build/stm32l0xx_hal_rcc_ex.o: STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc_ex.c
+	$(CC) -c $(CFLAGS) $^ -o $@
+
 build/%.s.o: src/%.s
-	mkdir -p build
 	$(AS) -c $(CFLAGS) $^ -o $@
 
-build/firmware.elf: build/main.o build/stm32l011k4_startup.o build/sfunc.s.o
+build/firmware.elf: build/main.o build/stm32l011k4_startup.o build/sfunc.s.o build/stm32l0xx_hal.o build/stm32l0xx_hal_rcc.o build/stm32l0xx_hal_cortex.o build/stm32l0xx_hal_rcc_ex.o
 	$(CC) $(LDFLAGS) $^ -o $@
+	$(SZ) $@
 
 flash: build/firmware.elf
 	openocd -f interface/stlink.cfg -f target/stm32l0.cfg -c "program build/firmware.elf verify reset exit"

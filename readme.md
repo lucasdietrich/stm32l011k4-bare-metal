@@ -30,9 +30,17 @@
 
 `.` in linker script always refers to a `vma` address
 
-## Trouble shooting
+## TODO: Trouble shooting / known problems
 
-`section `.bss' type changed to PROGBITS`
+- `section `.bss' type changed to PROGBITS`
+- `COMMON` section handling
+- When using QEMU, data in flash are all 0, so copy to RAM fails
+  - `*(uint32_t(*)[2024])0x8000428`
+  - Because QEMU already populate flash with expected value
+  - We need to emulate the "boot from flash" / or we need to skip the RAM population
+- Using `qemu-system-arm` ?
+- Calling `make` after change fails
+- Check `-pflash file` option
 
 ## Makefile
 

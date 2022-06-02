@@ -57,6 +57,11 @@ SECTIONS
         __start_bss = .;
 	__bss_start__ = __start_bss;
         *(.bss)
+	*(.bss*)
+
+	/* https://stackoverflow.com/questions/28474675/arm-common-section-and-fno-common-flag */
+    	*(COMMON)
+	    
         *(.noinit)
         . = ALIGN(4);
         __end_bss = .;
