@@ -6,7 +6,10 @@ src/main.c \
 src/stm32l011k4_startup.c \
 STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c \
 STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c \
-STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_gpio.c
+STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_gpio.c \
+STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_uart.c \
+STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc.c \
+STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc_ex.c
 
 # ASM sources
 ASM_SOURCES =  \

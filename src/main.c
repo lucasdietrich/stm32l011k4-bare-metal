@@ -8,8 +8,9 @@
 #include <stm32l0xx_hal_rcc.h>
 #include <stm32l0xx_hal_gpio.h>
 #include <stm32l0xx_nucleo_32.h>
+#include <stm32l0xx_hal_uart.h>
 
-const char msg[] = "Hello from nucleo_l011k4 !";
+#include <string.h>
 
 volatile __attribute__((used)) uint32_t var1 = 0x12345678U;
 volatile __attribute__((used, section(".noinit"))) uint32_t var2;
@@ -23,6 +24,8 @@ void SysTick_Handler(void)
 
 void Error_Handler(void)
 {
+	__disable_irq();
+
 	while (1);
 }
 
@@ -38,31 +41,113 @@ void HAL_MspInit(void)
 {
 	__HAL_RCC_SYSCFG_CLK_ENABLE();
 	__HAL_RCC_PWR_CLK_ENABLE();
-
 }
+
+void HAL_UART_MspInit(UART_HandleTypeDef *huart)
+{
+	GPIO_InitTypeDef GPIO_InitStruct = { 0 };
+	if (huart->Instance == USART2) {
+		__HAL_RCC_USART2_CLK_ENABLE();
+
+		__HAL_RCC_GPIOA_CLK_ENABLE();
+		GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_15;
+		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+		GPIO_InitStruct.Alternate = GPIO_AF4_USART2;
+		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	}
+}
+
+/*
+void SystemClock_Config(void)
+{
+	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
+	RCC_PeriphCLKInitTypeDef PeriphClkInit = { 0 };
+
+	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+	RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
+	RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
+	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+		Error_Handler();
+	}
+
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+		| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
+	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) {
+		Error_Handler();
+	}
+	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
+	PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
+		Error_Handler();
+	}
+}
+*/
 
 int main(void)
 {
 	HAL_Init();
 
+	// SystemClock_Config();
+
 	__HAL_RCC_GPIOC_CLK_ENABLE();
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 
-	GPIO_InitTypeDef cfg = {
+	GPIO_InitTypeDef port_cfg = {
 		.Pin = LED3_PIN,
 		.Mode = GPIO_MODE_OUTPUT_PP,
 		.Pull = GPIO_NOPULL,
 		.Speed = GPIO_SPEED_FREQ_LOW
 	};
 
-	HAL_GPIO_Init(LED3_GPIO_PORT, &cfg);
+	HAL_GPIO_Init(LED3_GPIO_PORT, &port_cfg);
+
+	UART_HandleTypeDef uart = {
+		.Init = {
+			.BaudRate = 115200U,
+			.WordLength = UART_WORDLENGTH_8B,
+			.StopBits = UART_STOPBITS_1,
+			.Parity = UART_PARITY_NONE,
+			.HwFlowCtl = UART_HWCONTROL_NONE,
+			.Mode = UART_MODE_TX_RX,
+			.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLED,
+			.OverSampling = UART_OVERSAMPLING_16,
+		},
+		.Instance = USART2,
+		.AdvancedInit = {
+			.AdvFeatureInit = UART_ADVFEATURE_NO_INIT
+		}
+	};
+
+	if (HAL_UART_Init(&uart) != HAL_OK) {
+		Error_Handler();
+	}
+
+	char msg[] = "Hello from nucleo_l011k4 !\n";
 
 	for (;;) {
-		HAL_Delay(1000);
+		HAL_Delay(500);
 		HAL_GPIO_WritePin(LED3_GPIO_PORT, LED3_PIN, GPIO_PIN_SET);
-		HAL_Delay(1000);
+		HAL_Delay(500);
 		HAL_GPIO_WritePin(LED3_GPIO_PORT, LED3_PIN, GPIO_PIN_RESET);
+
+		if (HAL_UART_Transmit(&uart, (uint8_t *)msg, strlen(msg), 1000U) != HAL_OK) {
+			Error_Handler();
+		}
 
 		i = _sinc(i);
 	}
