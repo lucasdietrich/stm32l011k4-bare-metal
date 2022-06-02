@@ -5,7 +5,8 @@ C_SOURCES =  \
 src/main.c \
 src/stm32l011k4_startup.c \
 STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c \
-STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c
+STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c \
+STM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_gpio.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -29,7 +30,8 @@ C_INCLUDES =  \
 -ISTM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc \
 -ISTM32CubeL0/Drivers/STM32L0xx_HAL_Driver/Inc/Legacy \
 -ISTM32CubeL0/Drivers/CMSIS/Device/ST/STM32L0xx/Include \
--ISTM32CubeL0/Drivers/CMSIS/Include
+-ISTM32CubeL0/Drivers/CMSIS/Include \
+-ISTM32CubeL0/Drivers/BSP/STM32L0xx_Nucleo_32
 
 CC=arm-none-eabi-gcc
 AS=arm-none-eabi-gcc -x assembler-with-cpp

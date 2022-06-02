@@ -5,7 +5,8 @@
         "stdlib.h": "c",
         "sfunc.h": "c",
         "stm32l011xx.h": "c",
-        "stm32l0xx_hal.h": "c"
+        "stm32l0xx_hal.h": "c",
+        "stm32l0xx_hal_gpio.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": false
 }
