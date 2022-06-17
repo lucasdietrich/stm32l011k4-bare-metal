@@ -1,14 +1,34 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode",
-    "files.associations": {
-        "*.asm": "avr",
-        "stdlib.h": "c",
-        "sfunc.h": "c",
-        "stm32l011xx.h": "c",
-        "stm32l0xx_hal.h": "c",
-        "stm32l0xx_hal_gpio.h": "c",
-        "stm32l0xx_hal_uart.h": "c",
-        "stm32l0xx_nucleo_32.h": "c"
-    },
-    "cortex-debug.variableUseNaturalFormat": false
+	"makefile.extensionOutputFolder": "./.vscode",
+	"files.associations": {
+		"*.asm": "avr",
+		"stdlib.h": "c",
+		"sfunc.h": "c",
+		"stm32l011xx.h": "c",
+		"stm32l0xx_hal.h": "c",
+		"stm32l0xx_hal_gpio.h": "c",
+		"stm32l0xx_hal_uart.h": "c",
+		"stm32l0xx_nucleo_32.h": "c",
+		"stm32l0xx_hal_conf.h": "c"
+	},
+	"cortex-debug.variableUseNaturalFormat": false,
+	"editor.guides.bracketPairs": true,
+	"editor.guides.highlightActiveIndentation": true,
+	"editor.guides.bracketPairsHorizontal": "active",
+	"workbench.colorCustomizations": {
+		"[Panda Syntax]": {
+			"editorBracketPairGuide.background1": "#FFB86C",
+			"editorBracketPairGuide.background2": "#FF75B5",
+			"editorBracketPairGuide.background3": "#45A9F9",
+			"editorBracketPairGuide.background4": "#B084EB",
+			"editorBracketPairGuide.background5": "#E6E6E6",
+			"editorBracketPairGuide.background6": "#19f9d8",
+			"editorBracketPairGuide.activeBackground1": "#FFB86C",
+			"editorBracketPairGuide.activeBackground2": "#FF75B5",
+			"editorBracketPairGuide.activeBackground3": "#45A9F9",
+			"editorBracketPairGuide.activeBackground4": "#B084EB",
+			"editorBracketPairGuide.activeBackground5": "#E6E6E6",
+			"editorBracketPairGuide.activeBackground6": "#19f9d8",
+		}
+	}
 }
