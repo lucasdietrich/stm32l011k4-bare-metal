@@ -3,18 +3,18 @@
 This project shows how to build, flash and debug a bare metal application on the `nucleo_l011k4` board.
 
 Two build methods are available:
-- `Makefile`
-- `CMake`
+- *Makefile*
+- *CMake*
 
 ## Get repositoy + prerequisites
 
 Clone with : `git clone https://github.com/lucasdietrich/stm32l011k4-bare-metal.git --recurse-submodules`
 
 Prerequisites:
-- `cmake version 3.22.2`
-- `arm-none-eabi-gcc (GNU Arm Embedded Toolchain 10.3-2021.10) 10.3.1 20210824 (release)`
-- `Open On-Chip Debugger 0.11.0`
-- `GNU gdb (GDB) Fedora 12.1-1.fc36`
+- cmake version *3.22.2*
+- arm-none-eabi-gcc (GNU Arm Embedded Toolchain *10.3-2021.10*) *10.3.1 20210824* (release)
+- Open On-Chip Debugger *0.11.0*
+- GNU gdb (GDB) Fedora *12.1-1.fc36*
 
 This project is fully integrated with Visual Studio Code, with extensions:
 - `ms-vscode.cpptools`
@@ -57,13 +57,13 @@ Topics:
 - newlibc
 - linker script
 - STM32L0Cube drivers:
-  - `syslock`
-  - `rcc`
-  - `gpio`
-  - `mco`
-  - `uart`
-- `Makefile` / `cmake`
-- `debug`
+  - *syslock*
+  - *rcc*
+  - *gpio*
+  - *mco*
+  - *uart*
+- *Makefile* / *cmake*
+- *debug*
 
 ---
 
