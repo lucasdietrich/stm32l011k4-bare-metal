@@ -1,6 +1,10 @@
-# Bare metal for `nucleo_l011k4` 
+# Bare metal development `nucleo_l011k4` 
 
-This project shows how to build, flash and debug a bare metal application on the `nucleo_l011k4` board.
+This project shows how to build, flash and debug a bare metal application on the `nucleo_l011k4` board, main characteristics :
+- STM32L0
+- ARM Cortex-M0+ core
+- 16KB of Flash, 2KB of SRAM
+- Embedded ST-Link for programming and debugging
 
 Two build methods are available:
 - *Makefile*
@@ -46,7 +50,7 @@ Run `make qemu`
 Select `Qemu Debug` VS code debug configuration and then press `Ctrl + F5`
 
 Important note: as only the core is emulated in QEMU following parts should be disabled:
-- Startup code for RAM initialization
+- Startup code for SRAM initialization
 - Peripheral handling
 
 ## Note
