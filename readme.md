@@ -1,83 +1,89 @@
-# Bare metal for nucleo_l011k4 
+# Bare metal for `nucleo_l011k4` 
 
-- Tutorials : https://linuxembedded.fr/2021/02/bare-metal-from-zero-to-blink
-  - Associated github repo : https://github.com/joved-git/Bare_Metal_STM32
-- [STM32Cube demo vscode](https://github.com/EmbeddedGeekYT/egSTM32/tree/vscode)
-- Video tutorial : https://www.youtube.com/watch?v=7stymN3eYw0
-- Check this : [github.com/cortexm/baremetal](https://github.com/cortexm/baremetal)
-- Video tutorial (GDB) : https://www.youtube.com/watch?v=QQcp8CPjkoY
+This project shows how to build, flash and debug a bare metal application on the `nucleo_l011k4` board.
 
-# Build / flash / debug
+Two build methods are available:
+- `Makefile`
+- `CMake`
 
-- Build : `make`
-- Flash : `make flash`
-- Debug : `Ctrl + F5`
-- Clean : `make clean`
+## Get repositoy + prerequisites
 
----
+Clone with : `git clone https://github.com/lucasdietrich/stm32l011k4-bare-metal.git --recurse-submodules`
 
-## Sections
+Prerequisites:
+- `cmake version 3.22.2`
+- `arm-none-eabi-gcc (GNU Arm Embedded Toolchain 10.3-2021.10) 10.3.1 20210824 (release)`
+- `Open On-Chip Debugger 0.11.0`
+- `GNU gdb (GDB) Fedora 12.1-1.fc36`
 
-`.text` : code
-`.data` : static data (copied to ram)
-`.bss` : non-initialize RAM data
-`.rodata` : read-only flash data
+This project is fully integrated with Visual Studio Code, with extensions:
+- `ms-vscode.cpptools`
+- `marus25.cortex-debug`
 
-## Linker script
+## Build, flash, debug
 
-`lma` : load memory address (initial place)
-`vma` : virtual memory address (final place of data in memory)
+Build using `cmake` :
+- `cmake -DCMAKE_TOOLCHAIN_FILE=./toolchain-arm-none-eabi.cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build`
 
-`.` in linker script always refers to a `vma` address
+Build using Makefile :
+- make --file=LegacyMakefile 
 
-## TODO: Trouble shooting / known problems
+Flash the application to the board :
+- `make flash`
 
-- `section `.bss' type changed to PROGBITS`
-- `COMMON` section handling
-- When using QEMU, data in flash are all 0, so copy to RAM fails
-  - `*(uint32_t(*)[2024])0x8000428`
-  - Because QEMU already populate flash with expected value
-  - We need to emulate the "boot from flash" / or we need to skip the RAM population
-- Using `qemu-system-arm` ?
-- Calling `make` after change fails
-- Check `-pflash file` option
+Debug:
+- Select `Target Debug` VS code debug confication
+- `Ctrl + F5` in VS Code
 
-## Makefile
+![](./pics/linux-arm-debug.png)
 
-- add flag `-nostdlib` to `LDFLAGS` to not link with libc
-- `^$` : dependencies = `%.c` (e.g. `main.c`)
-- `$@` : target (output file) = `%.o`: (e.g. `main.o`)
-
-## Show specific help
-
-`arm-none-eabi-gcc -Wl,--help | grep gc-sections`
-arm-none-eabi-gcc --help
-
-## Debug target with OpenOCD and GDB
-
-OpenOCD terminal : 
-```
-openocd -f interface/stlink.cfg -f target/stm32l0.cfg
-```
-
-GDB terminal :
-```
-arm-none-eabi-gdb
-```
-
-Then 
-```
-target extended-remote localhost:3333
-monitor reset init
-monitor flash write_image erase firmware.elf
-monitor reset halt
-monitor resume
-monitor reset
-```
+Clean : 
+- `make clean`
 
 ## Debug in QEMU using GDB
 
 Run `make qemu`
-And press `Ctrl + F5`
+Select `Qemu Debug` VS code debug configuration and then press `Ctrl + F5`
 
-![](./pics/linux-arm-debug.png)
+Important note: as only the core is emulated in QEMU following parts should be disabled:
+- Startup code for RAM initialization
+- Peripheral handling
+
+## Note
+
+Topics:
+- startup code
+- mixing assembly and c code
+- newlibc
+- linker script
+- STM32L0Cube drivers:
+  - `syslock`
+  - `rcc`
+  - `gpio`
+  - `mco`
+  - `uart`
+- `Makefile` / `cmake`
+- `debug`
+
+---
+
+## Sources
+
+- Tutorials : 
+  - [Bare Metal - From zero to blink](https://linuxembedded.fr/2021/02/bare-metal-from-zero-to-blink)
+    - Tutorial github repo : https://github.com/joved-git/Bare_Metal_STM32
+  - [CMake on STM32 | Episode 1: the beginning](https://dev.to/younup/cmake-on-stm32-the-beginning-3766)
+  - [How to cross-compile for embedded with CMake like a champ](https://kubasejdak.com/how-to-cross-compile-for-embedded-with-cmake-like-a-champ)
+  - Video tutorial : [STM32 Startup code, Bare metal - Part 3](https://www.youtube.com/watch?v=7stymN3eYw0)
+- Others:
+  - [ARM Cortex-M bare-metal example code in C++ and CMake build](https://github.com/cortexm/baremetal)
+  - [LVC21-308 Essential ARM Cortex M Debugging with GDB](https://www.youtube.com/watch?v=QQcp8CPjkoY)
+
+- Example of ARM toolchain .cmake files :
+  - https://github.com/vpetrigo/arm-cmake-toolchains
+    - Especially : https://github.com/vpetrigo/arm-cmake-toolchains/blob/master/arm-gcc-toolchain.cmake
+  - https://github.com/jobroe/cmake-arm-embedded
+    - Especially : https://github.com/jobroe/cmake-arm-embedded/blob/master/toolchain-arm-none-eabi.cmake
+- [STM32Cube demo vscode](https://github.com/EmbeddedGeekYT/egSTM32/tree/vscode)
+
+- [Others personnal notes](./personnal_notes.md)
